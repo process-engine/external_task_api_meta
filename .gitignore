@@ -1,0 +1,23 @@
+
+dist
+node_modules
+package-lock.json
+processengine.sqlite
+
+external_task_api_contracts
+external_task_api_client
+external_task_api_core
+external_task_api_http
+
+# OSX-finder info-files
+*.DS_Store
+
+# IDE configs
+.vscode/*
+!.vscode/launch.json
+.idea/
+*.iml
+*.iws
+.classpath
+.project
+.settings/
