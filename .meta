@@ -1,8 +1,8 @@
 {
   "projects": {
-    "consumer_api_contracts": "git@github.com:process-engine/consumer_api_contracts.git",
-    "consumer_api_client": "git@github.com:process-engine/consumer_api_client.git",
-    "consumer_api_core": "git@github.com:process-engine/consumer_api_core.git",
-    "consumer_api_http": "git@github.com:process-engine/consumer_api_http.git"
+    "external_task_api_contracts": "git@github.com:process-engine/external_task_api_contracts.git",
+    "external_task_api_client": "git@github.com:process-engine/external_task_api_client.git",
+    "external_task_api_core": "git@github.com:process-engine/external_task_api_core.git",
+    "external_task_api_http": "git@github.com:process-engine/external_task_api_http.git"
   }
 }
