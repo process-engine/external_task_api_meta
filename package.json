@@ -1,0 +1,16 @@
+{
+  "name": "@process-engine/external_task_api_meta",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "build": "meta exec \"npm run build\" --exclude external_task_api_meta",
+    "postinstall": "minstall --trust-local-modules ."
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "meta-npm": "0.0.18",
+    "minstall": "^3.3.1-pre3"
+  }
+}
