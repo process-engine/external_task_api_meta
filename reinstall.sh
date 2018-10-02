@@ -12,6 +12,6 @@ if [[ "$?" -ne "0" ]]; then
 fi
 
 # build all packages and schemas
-meta exec "npm run build" --exclude external_task_api_meta
+meta exec "npm run build" --exclude external_task_api_meta,external_task_api_contracts
 
 echo "done"
