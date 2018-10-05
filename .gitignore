@@ -11,6 +11,7 @@ external_task_api_client
 external_task_api_contracts
 external_task_api_core
 external_task_api_http
+external_task.repository.sequelize
 
 # OSX-finder info-files
 *.DS_Store
