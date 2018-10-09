@@ -104,16 +104,16 @@ export class TestFixtureProvider {
   }
 
   public async executeProcess(identity: IIdentity,
-                              processKey: string,
-                              startEventKey: string,
+                              processModelId: string,
+                              startEventId: string,
                               correlationId: string,
                               initialToken: any = {}): Promise<any> {
 
-    const processModel: Model.Types.Process = await this._getProcessById(processKey);
+    const processModel: Model.Types.Process = await this._getProcessById(processModelId);
 
     return this
       .executeProcessService
-      .startAndAwaitEndEvent(identity, processModel, startEventKey, correlationId, initialToken);
+      .startAndAwaitEndEvent(identity, processModel, startEventId, correlationId, initialToken);
   }
 
   private async _initializeBootstrapper(): Promise<void> {
