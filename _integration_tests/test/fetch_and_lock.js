@@ -7,7 +7,7 @@ const uuid = require('uuid');
 const ProcessInstanceHandler = require('../dist/commonjs').ProcessInstanceHandler;
 const TestFixtureProvider = require('../dist/commonjs').TestFixtureProvider;
 
-describe('ExternalTask API:   POST  ->  /worker/:worker_id/task/:external_task_id/finish', () => {
+describe('ExternalTask API:   POST  ->  /worker/:worker_id/fetch_and_lock', () => {
 
   let processInstanceHandler;
   let testFixtureProvider;

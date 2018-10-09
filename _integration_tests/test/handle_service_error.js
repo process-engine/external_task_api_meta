@@ -74,7 +74,7 @@ describe('ExternalTask API:   POST  ->  /worker/:worker_id/task/:external_task_i
     }
   });
 
-  it('should fail to get the results, if the ExternalTask is locked for another worker', async () => {
+  it('should fail to to abort the given ExternalTask, if the ExternalTask is locked for another worker', async () => {
 
     const invalidworkerId = 'some_other_work';
 
@@ -92,7 +92,7 @@ describe('ExternalTask API:   POST  ->  /worker/:worker_id/task/:external_task_i
     }
   });
 
-  it('should fail to get the results, when the user is unauthorized', async () => {
+  it('should fail to to abort the given ExternalTask, when the user is unauthorized', async () => {
 
     try {
       await testFixtureProvider
@@ -108,7 +108,7 @@ describe('ExternalTask API:   POST  ->  /worker/:worker_id/task/:external_task_i
     }
   });
 
-  it('should fail to get the results, when the user is forbidden to access ExternalTasks', async () => {
+  it('should fail to to abort the given ExternalTask, when the user is forbidden to access ExternalTasks', async () => {
 
     try {
       await testFixtureProvider
@@ -149,10 +149,19 @@ describe('ExternalTask API:   POST  ->  /worker/:worker_id/task/:external_task_i
     const externalTask = await externalTaskRepository.getById(externalTaskIdToAssert);
 
     should.exist(externalTask);
+
+    should(externalTask.workerId).be.equal(workerId);
+    should(externalTask.topic).be.equal(topicName);
     should(externalTask.state).be.equal('finished');
     should(externalTask).have.property('error');
     // should(externalTask.error.message).be.equal(errorMessage); // TODO: Due to some unknown bug, this info gets lost during serialization.
     should(externalTask.error._additionalInformation).be.equal(errorDetails); //eslint-disable-line
+
+    should(externalTask).have.property('flowNodeInstanceId');
+    should(externalTask).have.property('correlationId');
+    should(externalTask).have.property('processInstanceId');
+    should(externalTask).have.property('payload');
+    should(externalTask).have.property('createdAt');
   }
 
 });
