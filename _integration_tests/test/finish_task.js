@@ -6,7 +6,7 @@ const uuid = require('uuid');
 const ProcessInstanceHandler = require('../dist/commonjs').ProcessInstanceHandler;
 const TestFixtureProvider = require('../dist/commonjs').TestFixtureProvider;
 
-describe('ExternalTask API:   POST  ->  /worker/:worker_id/task/:external_task_id/handle_bpmn_error', () => {
+describe('ExternalTask API:   POST  ->  /worker/:worker_id/task/:external_task_id/finish', () => {
 
   let processInstanceHandler;
   let testFixtureProvider;
@@ -19,7 +19,9 @@ describe('ExternalTask API:   POST  ->  /worker/:worker_id/task/:external_task_i
   const processModelId = 'external_task_sample';
   const workerId = 'test_worker_1';
   const topicName = 'external_task_sample_topic';
-  const errorCode = 'Red alert';
+  const samplePayload = {
+    result: 'Success!',
+  };
 
   before(async () => {
     testFixtureProvider = new TestFixtureProvider();
@@ -38,20 +40,20 @@ describe('ExternalTask API:   POST  ->  /worker/:worker_id/task/:external_task_i
   after(async () => {
     await testFixtureProvider
       .externalTaskApiClientService
-      .handleBpmnError(defaultIdentity, workerId, externalTaskIdBadPathTests, errorCode);
+      .finishExternalTask(defaultIdentity, workerId, externalTaskIdBadPathTests, samplePayload);
 
     await testFixtureProvider.tearDown();
   });
 
-  it('should successfully abort the given ExternalTask with a BPMN Error', async () => {
+  it('should successfully finish the given ExternalTask with the given payload', async () => {
 
     const externalTaskIdHappyPathTest = await createWaitingExternalTask();
 
     await testFixtureProvider
       .externalTaskApiClientService
-      .handleBpmnError(defaultIdentity, workerId, externalTaskIdHappyPathTest, errorCode);
+      .finishExternalTask(defaultIdentity, workerId, externalTaskIdHappyPathTest, samplePayload);
 
-    await assertThatErrorHandlingWasSuccessful(externalTaskIdHappyPathTest, errorCode);
+    await assertThatFinishingWasSuccessful(externalTaskIdHappyPathTest, samplePayload);
   });
 
   it('should fail to abort the given ExternalTask, if the given ExternalTaskId does not exist', async () => {
@@ -62,7 +64,7 @@ describe('ExternalTask API:   POST  ->  /worker/:worker_id/task/:external_task_i
     try {
       await testFixtureProvider
         .externalTaskApiClientService
-        .handleBpmnError(defaultIdentity, workerId, invalidExternalTaskId, errorCode);
+        .finishExternalTask(defaultIdentity, workerId, invalidExternalTaskId, samplePayload);
 
       should.fail(invalidExternalTaskId, undefined, 'This request should have failed!');
     } catch (error) {
@@ -80,7 +82,7 @@ describe('ExternalTask API:   POST  ->  /worker/:worker_id/task/:external_task_i
     try {
       await testFixtureProvider
         .externalTaskApiClientService
-        .handleBpmnError(defaultIdentity, invalidworkerId, externalTaskIdBadPathTests, errorCode);
+        .finishExternalTask(defaultIdentity, invalidworkerId, externalTaskIdBadPathTests, samplePayload);
 
       should.fail(externalTaskIdBadPathTests, undefined, 'This request should have failed!');
     } catch (error) {
@@ -96,7 +98,7 @@ describe('ExternalTask API:   POST  ->  /worker/:worker_id/task/:external_task_i
     try {
       await testFixtureProvider
         .externalTaskApiClientService
-        .handleBpmnError({}, workerId, externalTaskIdBadPathTests, errorCode);
+        .finishExternalTask({}, workerId, externalTaskIdBadPathTests, samplePayload);
 
       should.fail(externalTaskIdBadPathTests, undefined, 'This request should have failed!');
     } catch (error) {
@@ -112,7 +114,7 @@ describe('ExternalTask API:   POST  ->  /worker/:worker_id/task/:external_task_i
     try {
       await testFixtureProvider
         .externalTaskApiClientService
-        .handleBpmnError(restrictedIdentity, workerId, externalTaskIdBadPathTests, errorCode);
+        .finishExternalTask(restrictedIdentity, workerId, externalTaskIdBadPathTests, samplePayload);
 
       should.fail(externalTaskIdBadPathTests, undefined, 'This request should have failed!');
     } catch (error) {
@@ -141,7 +143,7 @@ describe('ExternalTask API:   POST  ->  /worker/:worker_id/task/:external_task_i
     return availableExternalTasks[0].id;
   }
 
-  async function assertThatErrorHandlingWasSuccessful(externalTaskIdToAssert) {
+  async function assertThatFinishingWasSuccessful(externalTaskIdToAssert) {
 
     const externalTaskRepository = await testFixtureProvider.resolveAsync('ExternalTaskRepository');
 
@@ -149,8 +151,8 @@ describe('ExternalTask API:   POST  ->  /worker/:worker_id/task/:external_task_i
 
     should.exist(externalTask);
     should(externalTask.state).be.equal('finished');
-    should(externalTask).have.property('error');
-    // should(externalTask.error.message).be.equal(errorCode); // TODO: Due to some unknown bug, this info gets lost during serialization.
+    should(externalTask).have.property('result');
+    should(externalTask.result).be.eql(samplePayload);
   }
 
 });
