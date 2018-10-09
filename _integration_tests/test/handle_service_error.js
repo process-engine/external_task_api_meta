@@ -17,7 +17,7 @@ describe('ExternalTask API:   POST  ->  /worker/:worker_id/task/:external_task_i
   let externalTaskIdBadPathTests;
 
   const processModelId = 'external_task_sample';
-  const workerId = 'test_worker_1';
+  const workerId = 'handle_service_error_sample_worker';
   const topicName = 'external_task_sample_topic';
   const errorMessage = 'Red alert';
   const errorDetails = 'Critical error encountered';
