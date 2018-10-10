@@ -21,7 +21,7 @@ export class ProcessInstanceHandler {
     return this._testFixtureProvider;
   }
 
-  public async waitForProcessInstanceToReachServiceTask(correlationId: string, processModelId?: string): Promise<void> {
+  public async waitForProcessInstanceToReachSuspendedTask(correlationId: string, processModelId?: string): Promise<void> {
 
     const maxNumberOfRetries: number = 30;
     const delayBetweenRetriesInMs: number = 500;

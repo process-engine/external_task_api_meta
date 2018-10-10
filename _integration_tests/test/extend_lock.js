@@ -131,7 +131,7 @@ describe('ExternalTask API:   POST  ->  /worker/:worker_id/task/:external_task_i
 
     testFixtureProvider.executeProcess(processModelId, 'StartEvent_1', correlationId, {});
 
-    await processInstanceHandler.waitForProcessInstanceToReachServiceTask(correlationId);
+    await processInstanceHandler.waitForProcessInstanceToReachSuspendedTask(correlationId);
 
     const availableExternalTasks = await testFixtureProvider
       .externalTaskApiClientService

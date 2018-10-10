@@ -123,7 +123,7 @@ describe('ExternalTask API:   POST  ->  /worker/:worker_id/fetch_and_lock', () =
 
     testFixtureProvider.executeProcess(processModelId, 'StartEvent_1', correlationId, {});
 
-    await processInstanceHandler.waitForProcessInstanceToReachServiceTask(correlationId);
+    await processInstanceHandler.waitForProcessInstanceToReachSuspendedTask(correlationId);
   }
 
 });
