@@ -109,7 +109,7 @@ describe('ExternalTask API:   POST  ->  /worker/:worker_id/task/:external_task_i
     }
   });
 
-  it('should fail extend the lock, when the user is forbidden to access ExternalTasks', async () => {
+  it('should fail to extend the lock, when the user is forbidden to access ExternalTasks', async () => {
 
     try {
       await testFixtureProvider

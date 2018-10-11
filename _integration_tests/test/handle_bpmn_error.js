@@ -54,7 +54,7 @@ describe('ExternalTask API:   POST  ->  /worker/:worker_id/task/:external_task_i
     await assertThatErrorHandlingWasSuccessful(externalTaskIdHappyPathTest, errorCode);
   });
 
-  it('should fail to abort the given ExternalTask, if the ExernalTask is already aborted', async () => {
+  it('should fail to abort the given ExternalTask, if the ExternalTask is already aborted', async () => {
 
     try {
       await testFixtureProvider
