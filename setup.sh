@@ -3,7 +3,7 @@ npm install -g meta gulp
 
 # checkout all repos in the correct branch
 meta git update
-meta exec "git checkout develop" --exclude external_task_api_meta,external_task_api_contracts
+meta exec "git checkout develop" --exclude external_task_api_meta
 
 # retrieve latest versions
 meta git pull
@@ -17,4 +17,4 @@ if [[ "$?" -ne "0" ]]; then
 fi
 
 # build all packages and schemas
-meta exec "npm run build" --exclude external_task_api_meta,external_task_api_contracts
+meta exec "npm run build" --exclude external_task_api_meta,external_task_api_contracts,external_task_api_client
