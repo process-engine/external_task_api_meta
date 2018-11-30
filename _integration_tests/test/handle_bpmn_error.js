@@ -54,7 +54,7 @@ describe('ExternalTask API:   POST  ->  /worker/:worker_id/task/:external_task_i
     await assertThatErrorHandlingWasSuccessful(externalTaskIdHappyPathTest, errorCode);
   });
 
-  it('should fail to abort the given ExternalTask, if the ExternalTask is already aborted', async () => {
+  it('should fail to abort the given ExternalTask, if the ExernalTask is already aborted', async () => {
 
     try {
       await testFixtureProvider
@@ -143,9 +143,10 @@ describe('ExternalTask API:   POST  ->  /worker/:worker_id/task/:external_task_i
 
     const correlationId = uuid.v4();
 
-    testFixtureProvider.executeProcess(processModelId, 'StartEvent_1', correlationId, {});
+    testFixtureProvider.executeProcess(processModelId, 'StartEvent_1', correlationId, {test_type: 'without_payload'});
 
     await processInstanceHandler.waitForProcessInstanceToReachSuspendedTask(correlationId);
+    await processInstanceHandler.waitForExternalTaskToBeCreated(topicName);
 
     const availableExternalTasks = await testFixtureProvider
       .externalTaskApiClientService

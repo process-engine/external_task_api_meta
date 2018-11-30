@@ -109,7 +109,7 @@ describe('ExternalTask API:   POST  ->  /worker/:worker_id/task/:external_task_i
     }
   });
 
-  it('should fail to extend the lock, when the user is forbidden to access ExternalTasks', async () => {
+  it('should fail extend the lock, when the user is forbidden to access ExternalTasks', async () => {
 
     try {
       await testFixtureProvider
@@ -129,9 +129,10 @@ describe('ExternalTask API:   POST  ->  /worker/:worker_id/task/:external_task_i
 
     const correlationId = uuid.v4();
 
-    testFixtureProvider.executeProcess(processModelId, 'StartEvent_1', correlationId, {});
+    testFixtureProvider.executeProcess(processModelId, 'StartEvent_1', correlationId, {test_type: 'without_payload'});
 
     await processInstanceHandler.waitForProcessInstanceToReachSuspendedTask(correlationId);
+    await processInstanceHandler.waitForExternalTaskToBeCreated(topicName);
 
     const availableExternalTasks = await testFixtureProvider
       .externalTaskApiClientService

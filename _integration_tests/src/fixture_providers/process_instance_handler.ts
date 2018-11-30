@@ -1,5 +1,6 @@
-'use strict';
+'use strict'
 
+import {ExternalTask, IExternalTaskRepository} from '@process-engine/external_task_api_contracts';;
 import {IFlowNodeInstanceService, Runtime} from '@process-engine/process_engine_contracts';
 
 import {TestFixtureProvider} from './test_fixture_provider';
@@ -46,6 +47,27 @@ export class ProcessInstanceHandler {
     }
 
     throw new Error(`No ProcessInstance within correlation '${correlationId}' found! The ProcessInstance likely failed to start!`);
+  }
+
+  public async waitForExternalTaskToBeCreated(topicName: string, maxTask: number = 100): Promise<void> {
+
+    const maxNumberOfRetries: number = 30;
+    const delayBetweenRetriesInMs: number = 500;
+
+    const externalTaskRepository: IExternalTaskRepository = await this.testFixtureProvider.resolveAsync('ExternalTaskRepository');
+
+    for (let i: number = 0; i < maxNumberOfRetries; i++) {
+
+      await this.wait(delayBetweenRetriesInMs);
+
+      const externalTasks: Array<ExternalTask<any>> = await externalTaskRepository.fetchAvailableForProcessing(topicName, maxTask);
+
+      if (externalTasks.length >= 1) {
+        return;
+      }
+    }
+
+    throw new Error(`No ExternalTasks for topic '${topicName}' found! It is likely that creating the ExternalTask failed!`);
   }
 
   /**

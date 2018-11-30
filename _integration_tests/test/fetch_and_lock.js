@@ -14,11 +14,11 @@ describe('ExternalTask API:   POST  ->  /worker/:worker_id/fetch_and_lock', () =
 
   let defaultIdentity;
   let restrictedIdentity;
-  let externalTaskIdToCleanupAfterTest;
 
   const processModelId = 'external_task_sample';
   const workerId = 'fetch_and_lock_sample_worker';
   const topicName = 'external_task_sample_topic';
+  const topicNameWithPayload = 'external_task_sample_topic_with_payload';
 
   before(async () => {
     testFixtureProvider = new TestFixtureProvider();
@@ -33,11 +33,6 @@ describe('ExternalTask API:   POST  ->  /worker/:worker_id/fetch_and_lock', () =
   });
 
   after(async () => {
-
-    await testFixtureProvider
-      .externalTaskApiClientService
-      .finishExternalTask(defaultIdentity, workerId, externalTaskIdToCleanupAfterTest, {});
-
     await testFixtureProvider.tearDown();
   });
 
@@ -53,7 +48,7 @@ describe('ExternalTask API:   POST  ->  /worker/:worker_id/fetch_and_lock', () =
 
   it('should successfully get a list of ExternalTasks, if there is at least one ExternalTask available', async () => {
 
-    await createWaitingExternalTask();
+    await createWaitingExternalTask('without_payload', topicName);
 
     const availableExternalTasks = await testFixtureProvider
       .externalTaskApiClientService
@@ -64,7 +59,7 @@ describe('ExternalTask API:   POST  ->  /worker/:worker_id/fetch_and_lock', () =
 
     const externalTask = availableExternalTasks[0];
 
-    externalTaskIdToCleanupAfterTest = externalTask.id;
+    await finishExternalTask(externalTask.id);
 
     should(externalTask.workerId).be.equal(workerId);
     should(externalTask.topic).be.equal(topicName);
@@ -85,6 +80,25 @@ describe('ExternalTask API:   POST  ->  /worker/:worker_id/fetch_and_lock', () =
     should(externalTask).have.property('createdAt');
   });
 
+  it('should successfully get a waiting ExternalTask with a defined payload', async () => {
+
+    await createWaitingExternalTask('with_payload', topicNameWithPayload);
+
+    const availableExternalTasks = await testFixtureProvider
+      .externalTaskApiClientService
+      .fetchAndLockExternalTasks(defaultIdentity, workerId, topicNameWithPayload, 1, 0, 10000);
+
+    should(availableExternalTasks).be.an.Array();
+    should(availableExternalTasks.length).be.equal(1);
+
+    const externalTask = availableExternalTasks[0];
+
+    await finishExternalTask(externalTask.id);
+
+    should(externalTask.payload).have.property('testProperty');
+    should(externalTask.payload.testProperty).be.equal('Test');
+  });
+
   it('should fail to fetch and lock, when the user is unauthorized', async () => {
 
     try {
@@ -92,7 +106,7 @@ describe('ExternalTask API:   POST  ->  /worker/:worker_id/fetch_and_lock', () =
         .externalTaskApiClientService
         .fetchAndLockExternalTasks({}, workerId, topicName, 1, 0, 10000);
 
-      should.fail(externalTaskIdToCleanupAfterTest, undefined, 'This request should have failed!');
+      should.fail('externalTask', undefined, 'This request should have failed, because no token was supplied!');
     } catch (error) {
       const expectedErrorCode = 401;
       const expectedErrorMessage = /no auth token provided/i;
@@ -108,7 +122,7 @@ describe('ExternalTask API:   POST  ->  /worker/:worker_id/fetch_and_lock', () =
         .externalTaskApiClientService
         .fetchAndLockExternalTasks(restrictedIdentity, workerId, topicName, 1, 0, 10000);
 
-      should.fail(externalTaskIdToCleanupAfterTest, undefined, 'This request should have failed!');
+      should.fail('externalTask', undefined, 'This request should have failed, because the user has no right to see ExternalTasks!');
     } catch (error) {
       const expectedErrorCode = 403;
       const expectedErrorMessage = /access denied/i;
@@ -117,13 +131,20 @@ describe('ExternalTask API:   POST  ->  /worker/:worker_id/fetch_and_lock', () =
     }
   });
 
-  async function createWaitingExternalTask() {
+  async function createWaitingExternalTask(testType, targetTopicName) {
 
     const correlationId = uuid.v4();
 
-    testFixtureProvider.executeProcess(processModelId, 'StartEvent_1', correlationId, {});
+    testFixtureProvider.executeProcess(processModelId, 'StartEvent_1', correlationId, {test_type: testType});
 
     await processInstanceHandler.waitForProcessInstanceToReachSuspendedTask(correlationId);
+    await processInstanceHandler.waitForExternalTaskToBeCreated(targetTopicName);
+  }
+
+  async function finishExternalTask(externalTaskId) {
+    await testFixtureProvider
+      .externalTaskApiClientService
+      .finishExternalTask(defaultIdentity, workerId, externalTaskId, {});
   }
 
 });
