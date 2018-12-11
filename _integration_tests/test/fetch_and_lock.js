@@ -59,7 +59,7 @@ describe('ExternalTask API:   POST  ->  /worker/:worker_id/fetch_and_lock', () =
 
     const externalTask = availableExternalTasks[0];
 
-    await finishExternalTask(externalTask.id);
+    await cleanup(externalTask.id, externalTask.correlationId);
 
     should(externalTask.workerId).be.equal(workerId);
     should(externalTask.topic).be.equal(topicName);
@@ -93,7 +93,7 @@ describe('ExternalTask API:   POST  ->  /worker/:worker_id/fetch_and_lock', () =
 
     const externalTask = availableExternalTasks[0];
 
-    await finishExternalTask(externalTask.id);
+    await cleanup(externalTask.id, externalTask.correlationId);
 
     should(externalTask.payload).have.property('testProperty');
     should(externalTask.payload.testProperty).be.equal('Test');
@@ -141,10 +141,14 @@ describe('ExternalTask API:   POST  ->  /worker/:worker_id/fetch_and_lock', () =
     await processInstanceHandler.waitForExternalTaskToBeCreated(targetTopicName);
   }
 
-  async function finishExternalTask(externalTaskId) {
-    await testFixtureProvider
-      .externalTaskApiClientService
-      .finishExternalTask(defaultIdentity, workerId, externalTaskId, {});
+  async function cleanup(externalTaskId, correlationId) {
+    return new Promise(async (resolve, reject) => {
+      processInstanceHandler.waitForProcessInstanceToEnd(correlationId, processModelId, resolve);
+
+      await testFixtureProvider
+        .externalTaskApiClientService
+        .finishExternalTask(defaultIdentity, workerId, externalTaskId, {});
+    });
   }
 
 });
