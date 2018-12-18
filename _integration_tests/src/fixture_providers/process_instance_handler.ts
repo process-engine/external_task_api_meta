@@ -1,6 +1,6 @@
 'use strict';
 
-import {IEventAggregator} from '@essential-projects/event_aggregator_contracts';
+import {EventReceivedCallback, IEventAggregator} from '@essential-projects/event_aggregator_contracts';
 import {ExternalTask, IExternalTaskRepository} from '@process-engine/external_task_api_contracts';
 import {IFlowNodeInstanceService, Runtime} from '@process-engine/process_engine_contracts';
 
@@ -92,7 +92,7 @@ export class ProcessInstanceHandler {
    * @param processModelId The id of the process model to wait for.
    * @param resolveFunc    The function to call when the process was finished.
    */
-  public waitForProcessInstanceToEnd(correlationId: string, processModelId: string, resolveFunc: Function): void {
+  public waitForProcessInstanceToEnd(correlationId: string, processModelId: string, resolveFunc: EventReceivedCallback): void {
     const endMessageToWaitFor: string = `/processengine/correlation/${correlationId}/processmodel/${processModelId}/ended`;
     this.eventAggregator.subscribeOnce(endMessageToWaitFor, resolveFunc);
   }
