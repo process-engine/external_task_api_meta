@@ -1,11 +1,13 @@
 {
-    "extends": "5minds",
-    "rules": {
-      "max-len": [2, 150, 2, {
-        "ignoreUrls": true,
-        "ignoreComments": false
-      }],
-      "no-continue": "off",
-      "no-use-before-define": "off"
-    }
+  "extends": "5minds",
+  "rules": {
+    "max-len": [2, 150, 2, {
+      "ignoreUrls": true,
+      "ignoreComments": false
+    }],
+    "import/no-extraneous-dependencies": 0,
+    "no-continue": "off",
+    "no-use-before-define": "off",
+    "no-console": "off"
+  }
 }
