@@ -32,7 +32,11 @@ export class ProcessInstanceHandler {
     return this._testFixtureProvider;
   }
 
-  public async waitForProcessInstanceToReachSuspendedTask(correlationId: string, processModelId?: string): Promise<void> {
+  public async waitForProcessInstanceToReachSuspendedTask(
+    correlationId: string,
+    processModelId?: string,
+    expectedNumberOfWaitingTasks: number = 1,
+  ): Promise<void> {
 
     const maxNumberOfRetries: number = 60;
     const delayBetweenRetriesInMs: number = 200;
@@ -51,12 +55,12 @@ export class ProcessInstanceHandler {
         });
       }
 
-      if (flowNodeInstances.length >= 1) {
+      if (flowNodeInstances.length >= expectedNumberOfWaitingTasks) {
         return;
       }
     }
 
-    throw new Error(`No ProcessInstance within correlation '${correlationId}' found! The ProcessInstance likely failed to start!`);
+    throw new Error(`No process instance within correlation '${correlationId}' found! The process instance likely failed to start!`);
   }
 
   public async waitForExternalTaskToBeCreated(topicName: string, maxTask: number = 100): Promise<void> {
@@ -94,6 +98,11 @@ export class ProcessInstanceHandler {
    */
   public waitForProcessInstanceToEnd(correlationId: string, processModelId: string, resolveFunc: EventReceivedCallback): void {
     const endMessageToWaitFor: string = `/processengine/correlation/${correlationId}/processmodel/${processModelId}/ended`;
+    this.eventAggregator.subscribeOnce(endMessageToWaitFor, resolveFunc);
+  }
+
+  public waitForProcessByInstanceIdToEnd(processInstanceId: string, resolveFunc: EventReceivedCallback): void {
+    const endMessageToWaitFor: string = `/processengine/process/${processInstanceId}/ended`;
     this.eventAggregator.subscribeOnce(endMessageToWaitFor, resolveFunc);
   }
 
