@@ -55,7 +55,8 @@ export class ProcessInstanceHandler {
         });
       }
 
-      if (flowNodeInstances.length >= expectedNumberOfWaitingTasks) {
+      const enoughWaitingTasksFound: boolean = flowNodeInstances.length >= expectedNumberOfWaitingTasks;
+      if (enoughWaitingTasksFound) {
         return;
       }
     }
