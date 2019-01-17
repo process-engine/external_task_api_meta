@@ -160,6 +160,7 @@ export class TestFixtureProvider {
 
     return <IIdentity> {
       token: encodedToken,
+      userId: username,
     };
   }
 
