@@ -3,8 +3,7 @@
 const should = require('should');
 const uuid = require('uuid');
 
-const ProcessInstanceHandler = require('../dist/commonjs').ProcessInstanceHandler;
-const TestFixtureProvider = require('../dist/commonjs').TestFixtureProvider;
+const {ProcessInstanceHandler, TestFixtureProvider} = require('../dist/commonjs');
 
 describe('ExternalTask API:   POST  ->  /worker/:worker_id/task/:external_task_id/handle_bpmn_error', () => {
 
@@ -177,7 +176,7 @@ describe('ExternalTask API:   POST  ->  /worker/:worker_id/task/:external_task_i
 
   async function cleanup() {
     return new Promise(async (resolve, reject) => {
-      processInstanceHandler.waitForProcessByInstanceIdToEnd(externalTaskBadPathTests.processInstanceId, resolve);
+      processInstanceHandler.waitForProcessWithInstanceIdToEnd(externalTaskBadPathTests.processInstanceId, resolve);
 
       await testFixtureProvider
         .externalTaskApiClientService

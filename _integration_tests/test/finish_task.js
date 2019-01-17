@@ -3,8 +3,7 @@
 const should = require('should');
 const uuid = require('uuid');
 
-const ProcessInstanceHandler = require('../dist/commonjs').ProcessInstanceHandler;
-const TestFixtureProvider = require('../dist/commonjs').TestFixtureProvider;
+const {ProcessInstanceHandler, TestFixtureProvider} = require('../dist/commonjs');
 
 describe('ExternalTask API:   POST  ->  /worker/:worker_id/task/:external_task_id/finish', () => {
 
@@ -46,11 +45,17 @@ describe('ExternalTask API:   POST  ->  /worker/:worker_id/task/:external_task_i
 
   it('should successfully finish the given ExternalTask with the given payload', async () => {
 
-    await testFixtureProvider
-      .externalTaskApiClientService
-      .finishExternalTask(defaultIdentity, workerId, externalTaskHappyPathTest.id, samplePayload);
+    return new Promise(async (resolve, reject) => {
 
-    await assertThatFinishingWasSuccessful(externalTaskHappyPathTest.id, samplePayload);
+      processInstanceHandler.waitForProcessWithInstanceIdToEnd(externalTaskHappyPathTest.processInstanceId, async () => {
+        await assertThatFinishingWasSuccessful(externalTaskHappyPathTest.id, samplePayload);
+        resolve();
+      });
+
+      await testFixtureProvider
+        .externalTaskApiClientService
+        .finishExternalTask(defaultIdentity, workerId, externalTaskHappyPathTest.id, samplePayload);
+    });
   });
 
   it('should fail to finish the given ExternalTask, if the ExernalTask is already finished', async () => {
@@ -179,7 +184,7 @@ describe('ExternalTask API:   POST  ->  /worker/:worker_id/task/:external_task_i
 
   async function cleanup() {
     return new Promise(async (resolve, reject) => {
-      processInstanceHandler.waitForProcessByInstanceIdToEnd(externalTaskBadPathTests.processInstanceId, resolve);
+      processInstanceHandler.waitForProcessWithInstanceIdToEnd(externalTaskBadPathTests.processInstanceId, resolve);
 
       await testFixtureProvider
         .externalTaskApiClientService

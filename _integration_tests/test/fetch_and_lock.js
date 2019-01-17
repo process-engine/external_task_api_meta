@@ -4,8 +4,7 @@ const moment = require('moment');
 const should = require('should');
 const uuid = require('uuid');
 
-const ProcessInstanceHandler = require('../dist/commonjs').ProcessInstanceHandler;
-const TestFixtureProvider = require('../dist/commonjs').TestFixtureProvider;
+const {ProcessInstanceHandler, TestFixtureProvider} = require('../dist/commonjs');
 
 describe('ExternalTask API:   POST  ->  /worker/:worker_id/fetch_and_lock', () => {
 
@@ -92,6 +91,8 @@ describe('ExternalTask API:   POST  ->  /worker/:worker_id/fetch_and_lock', () =
     should(availableExternalTasks.length).be.equal(1);
 
     const externalTask = availableExternalTasks[0];
+    console.log(externalTask);
+    should(externalTask.payload.currentToken).have.property('test_type');
 
     await cleanup(externalTask);
 
@@ -142,7 +143,7 @@ describe('ExternalTask API:   POST  ->  /worker/:worker_id/fetch_and_lock', () =
 
   async function cleanup(externalTask) {
     return new Promise(async (resolve, reject) => {
-      processInstanceHandler.waitForProcessByInstanceIdToEnd(externalTask.processInstanceId, resolve);
+      processInstanceHandler.waitForProcessWithInstanceIdToEnd(externalTask.processInstanceId, resolve);
 
       await testFixtureProvider
         .externalTaskApiClientService
