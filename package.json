@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "build": "meta exec \"npm run build\" --exclude external_task_api_meta,external_task_api_contracts,external_task_api_client",
-    "postinstall": "minstall --trust-local-modules ."
+    "postinstall": "minstall --trust-local-modules .",
+    "reinstall": "./reinstall.sh"
   },
   "author": "",
   "license": "ISC",
