@@ -25,7 +25,7 @@ export function registerInContainer(container: InvocationContainer): void {
   } else {
 
     container.register('ExternalTaskApiExternalAccessor', ExternalTaskApiExternalAccessor)
-      .dependencies('HttpService');
+      .dependencies('HttpClient');
 
     container.register('ExternalTaskApiClientService', ExternalTaskApiClientService)
       .dependencies('ExternalTaskApiExternalAccessor');
