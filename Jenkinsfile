@@ -60,7 +60,7 @@ def slack_send_testlog(testlog) {
     def requestBody = [
       "token=${SLACK_TOKEN}",
       "content=${testlog}",
-      "filename=process_engine_integration_tests.txt",
+      "filename=external_task_api_integrationtests.txt",
       "channels=process-engine_ci"
     ];
 
