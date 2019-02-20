@@ -11,11 +11,8 @@ import {AppBootstrapper} from '@essential-projects/bootstrapper_node';
 import {IIdentity, TokenBody} from '@essential-projects/iam_contracts';
 
 import {IExternalTaskApi} from '@process-engine/external_task_api_contracts';
-import {
-  IExecuteProcessService,
-  IProcessModelService,
-  Model,
-} from '@process-engine/process_engine_contracts';
+import {IExecuteProcessService} from '@process-engine/process_engine_contracts';
+import {IProcessModelService, Model} from '@process-engine/process_model.contracts';
 
 import {initializeBootstrapper} from './setup_ioc_container';
 
