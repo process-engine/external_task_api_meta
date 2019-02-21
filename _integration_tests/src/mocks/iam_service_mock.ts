@@ -1,5 +1,3 @@
-import * as jsonwebtoken from 'jsonwebtoken';
-
 import {ForbiddenError} from '@essential-projects/errors_ts';
 import {IIAMService, IIdentity, TokenBody} from '@essential-projects/iam_contracts';
 
@@ -20,10 +18,13 @@ export class IamServiceMock implements IIAMService {
       throw new ForbiddenError('Access denied');
     }
 
-    const decodedToken: TokenBody = this._decodeToken(identity.token);
-    const identityName: string = decodedToken.sub;
+    // The dummy token is used by the AutoStartService and must always be passed.
+    const isDummyToken: boolean = identity.userId === 'dummy_token';
+    if (isDummyToken) {
+      return Promise.resolve();
+    }
 
-    const claimConfig: Array<string> = this.claimConfigs[identityName];
+    const claimConfig: Array<string> = this.claimConfigs[identity.userId];
 
     const userHasClaim: boolean = claimConfig.some((claim: string): boolean => {
       return claim === requiredClaimName;
@@ -32,11 +33,5 @@ export class IamServiceMock implements IIAMService {
     if (!userHasClaim) {
       throw new ForbiddenError('Access denied');
     }
-  }
-
-  private _decodeToken(token: string): TokenBody {
-    const decodedToken: TokenBody = <TokenBody> jsonwebtoken.decode(token);
-
-    return decodedToken;
   }
 }

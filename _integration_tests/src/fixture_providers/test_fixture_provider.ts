@@ -109,12 +109,9 @@ export class TestFixtureProvider {
                               startEventId: string,
                               correlationId: string,
                               initialToken: any = {}): Promise<any> {
-
-    const processModel: Model.Types.Process = await this._getProcessById(processModelId);
-
     return this
       .executeProcessService
-      .startAndAwaitEndEvent(this.identities.defaultUser, processModel, startEventId, correlationId, initialToken);
+      .startAndAwaitEndEvent(this.identities.defaultUser, processModelId, startEventId, correlationId, initialToken);
   }
 
   private async _initializeBootstrapper(): Promise<void> {
@@ -174,12 +171,5 @@ export class TestFixtureProvider {
     const processModelAsXml: string = fs.readFileSync(processModelPath, 'utf-8');
 
     return processModelAsXml;
-  }
-
-  private async _getProcessById(processId: string): Promise<Model.Types.Process> {
-
-    const processModel: Model.Types.Process = await this.processModelService.getProcessModelById(this.identities.defaultUser, processId);
-
-    return processModel;
   }
 }
