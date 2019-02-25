@@ -75,7 +75,7 @@
     "eslint-plugin-import": "^2.14.0",
     "gulp": "^4.0.0",
     "gulptraum": "^3.0.0",
-    "gulptraum-typescript": "^2.0.0",
+    "gulptraum-typescript": "^3.0.0",
     "mocha": "^5.2.0",
     "mocha-jenkins-reporter": "^0.4.1",
     "should": "^13.2.3",
